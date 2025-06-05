@@ -16,10 +16,11 @@ public class GameManager : MonoBehaviour
     }
     
     public ChangePage changePage;
+    public LoginAndSignUp loginAndSignUp;
 
     [Header("UserInfo")] 
     public UserData userData;
-    public JsonUserData jsonUserData;
+    public List<UserData> userDataList;
 
     [Header("RefreshText")] 
     public TextMeshProUGUI currentName;
@@ -41,25 +42,12 @@ public class GameManager : MonoBehaviour
     }
 
     public void Start()
-    {
-        Debug.Log(JsonDataSaveLoad.FilePath);
-        if (JsonDataSaveLoad.SaveFileExists())
-        {
-            JsonDataSaveLoad.LoadUserDataFromJson(userData);
-        }
-        else
-        {
-            userData = new UserData("임창민", 1000000, 1000000);
-            // 첫 실행: 기본 데이터 생성 → 저장
-            jsonUserData = new JsonUserData(userData); // 원하는 초기값 넣기
-            JsonDataSaveLoad.SaveUserDataToJson(jsonUserData);
-            jsonUserData.Load(userData);
-        }
-        
-        Refresh();
-        changePage.OnMain();
+    { 
+        userDataList = JsonDataSaveLoad.ConvertJsonListToUserDataList
+            (JsonDataSaveLoad.LoadJsonUserList());
+        changePage.OnLogin();
     }
-
+    
     public void Refresh()
     {
         currentName.text = userData.userName;

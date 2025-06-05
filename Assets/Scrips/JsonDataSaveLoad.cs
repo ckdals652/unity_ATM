@@ -1,37 +1,52 @@
-using UnityEngine;
+using System.Collections.Generic;
 using System.IO;
-using Unity.VisualScripting;
+using UnityEngine;
 
 public static class JsonDataSaveLoad
 {
-    private const string FileName = "JsonUserData.json";
-    
-    // 모든 저장·불러오기에서 공통으로 쓸 경로
-    public static readonly string FilePath =
-        Path.Combine(Application.persistentDataPath, FileName);
+    private const string FileName = "UserDataList.json";
+    public static readonly string FilePath = Path.Combine(Application.persistentDataPath, FileName);
 
-    public static bool SaveFileExists()
+    public static bool SaveFileExists() => File.Exists(FilePath);
+
+    public static void SaveJsonUserList(List<JsonUserData> userList)
     {
-        // 파일 존재 여부만 반환
-        return File.Exists(FilePath);
+        var wrapper = new JsonUserDataListWrapper { jsonUsers = userList };
+        string json = JsonUtility.ToJson(wrapper, true);
+        File.WriteAllText(FilePath, json);
     }
 
-    public static void SaveUserDataToJson(JsonUserData userData)
+    public static List<JsonUserData> LoadJsonUserList()
     {
-        string jsonData = JsonUtility.ToJson(userData, true);
-        File.WriteAllText(FilePath, jsonData);
-    }
-
-    public static void LoadUserDataFromJson(UserData userData)
-    {
-        if (!File.Exists(FilePath))
+        if (!SaveFileExists())
         {
-            Debug.LogWarning($"저장 파일이 없어 기본 값으로 시작합니다: {FilePath}");
-            return;   // 또는 여기서 기본 데이터를 만들어 저장해도 됩니다.
+            return new List<JsonUserData>();
         }
-
-        string jsonData = File.ReadAllText(FilePath);
-        JsonUserData jsonUserData = JsonUtility.FromJson<JsonUserData>(jsonData);
-        jsonUserData.Load(userData);
+        
+        string json = File.ReadAllText(FilePath);
+        var wrapper = JsonUtility.FromJson<JsonUserDataListWrapper>(json);
+        
+        return wrapper.jsonUsers;
     }
+    
+    public static List<JsonUserData> ConvertUserDataListToJsonList(List<UserData> userDatas)
+    {
+        List<JsonUserData> result = new List<JsonUserData>();
+        foreach (UserData user in userDatas)
+        {
+            result.Add(new JsonUserData(user));
+        }
+        return result;
+    }
+
+    public static List<UserData> ConvertJsonListToUserDataList(List<JsonUserData> jsonUserDatas)
+    {
+        List<UserData> result = new List<UserData>();
+        foreach (JsonUserData json in jsonUserDatas)
+        {
+            result.Add(new UserData(json));
+        }
+        return result;
+    }
+
 }

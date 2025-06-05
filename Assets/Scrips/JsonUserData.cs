@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 [Serializable]
 public class JsonUserData
@@ -6,25 +7,39 @@ public class JsonUserData
     public string userName;
     public int cash;
     public int bankAccountBalance;
+    public string id;
+    public string password;
 
     public JsonUserData(UserData userData)
     {
         userName = userData.userName;
         cash = userData.cash;
         bankAccountBalance = userData.bankAccountBalance;
-    }
-    
-    public void Save(UserData userData)
-    {
-        this.userName = userData.userName;
-        this.cash = userData.cash;
-        this.bankAccountBalance = userData.bankAccountBalance;
+        id = userData.id;
+        password = userData.password;
     }
 
-    public void Load(UserData userData)
+    public void UserDataToJsonData(UserData userData)
     {
-        userData.userName = this.userName;
-        userData.cash = this.cash;
-        userData.bankAccountBalance = this.bankAccountBalance;
+        userName = userData.userName;
+        cash = userData.cash;
+        bankAccountBalance = userData.bankAccountBalance;
+        id = userData.id;
+        password = userData.password;
     }
+
+    public void JsonDataToUserData(UserData userData)
+    {
+        userData.userName = userName;
+        userData.cash = cash;
+        userData.bankAccountBalance = bankAccountBalance;
+        userData.id = id;
+        userData.password = password;
+    }
+}
+
+[Serializable]
+public class JsonUserDataListWrapper
+{
+    public List<JsonUserData> jsonUsers = new();
 }

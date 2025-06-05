@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.Mime;
+using System.Resources;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -18,12 +20,23 @@ public class ChangePage : MonoBehaviour
     public GameObject mainPage;
     public GameObject depositPage;
     public GameObject withdrawalPage;
-	public GameObject userInfoAndCashPage;
+    public GameObject userInfoAndCashPage;
     public GameObject loginPage;
     public GameObject singUpPage;
 
-    
-    
+    public GameObject popUpPage;
+    public TextMeshProUGUI popUpText;
+
+    private GameManager _gameManager;
+
+    public void Start()
+    {
+        _gameManager = GameManager.Instance;
+        _gameManager.changePage = this;
+
+        popUpPage.SetActive(false);
+    }
+
     public void OnMain()
     {
         backGround.color = mainColor;
@@ -68,7 +81,7 @@ public class ChangePage : MonoBehaviour
         singUpPage.SetActive(false);
     }
 
-    public void OnSingUp()
+    public void OnSignUp()
     {
         backGround.color = singUpColor;
         singUpPage.SetActive(true);
@@ -77,6 +90,16 @@ public class ChangePage : MonoBehaviour
         mainPage.SetActive(false);
         depositPage.SetActive(false);
         withdrawalPage.SetActive(false);
-        singUpPage.SetActive(false);
+    }
+
+    public void OnPopUp(string msg)
+    {
+        popUpText.text = msg;
+        popUpPage.SetActive(true);
+    }
+
+    public void ClosePopUp()
+    {
+        popUpPage.SetActive(false);
     }
 }
